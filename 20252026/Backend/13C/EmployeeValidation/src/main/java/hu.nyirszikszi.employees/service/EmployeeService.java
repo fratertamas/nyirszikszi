@@ -1,0 +1,115 @@
+package hu.nyirszikszi.employees.service;
+
+import hu.nyirszikszi.employees.domain.Department;
+import hu.nyirszikszi.employees.domain.Employee;
+import hu.nyirszikszi.employees.dto.CreateEmployeeCommand;
+import hu.nyirszikszi.employees.dto.EmployeeDto;
+import hu.nyirszikszi.employees.dto.UpdateEmployeeCommand;
+import hu.nyirszikszi.employees.exception.DuplicateEmailException;
+import hu.nyirszikszi.employees.exception.EmployeeNotFoundException;
+import hu.nyirszikszi.employees.repository.InMemoryEmployeeRepository;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class EmployeeService {
+    private final InMemoryEmployeeRepository repo;
+
+
+    public EmployeeService(InMemoryEmployeeRepository repo) {
+        this.repo = repo;
+    }
+
+    public EmployeeDto create(CreateEmployeeCommand cmd) {
+        repo.findByEmailIgnoreCase(cmd.getEmail()).ifPresent( e -> {
+            throw new DuplicateEmailException(cmd.getEmail());
+        });
+
+        Employee saved = repo.save(new Employee(
+                0,
+                cmd.getName().trim(),
+                cmd.getEmail().trim(),
+                cmd.getSalary(),
+                cmd.getBirthDate(),
+                Department.valueOf(cmd.getDepartment().trim().toUpperCase())
+        ));
+        return toDto(saved);
+    }
+
+    public List<EmployeeDto> list(String department, Integer minSalary) {
+        boolean hasDept = department != null && !department.isBlank();
+        boolean hasMin = minSalary != null;
+
+        return repo.findAll().stream()
+                .filter(e -> !hasDept || e.getDepartment() == Department.valueOf(department.trim().toUpperCase()))
+                .filter( e -> !hasMin || e.getSalary() >= minSalary)
+                .map(this::toDto)
+                .toList();
+    }
+
+    public EmployeeDto get(long id) {
+        Employee e = repo.findById(id).orElseThrow(() -> new EmployeeNotFoundException(id));
+        return toDto(e);
+    }
+
+    public EmployeeDto update(long id, UpdateEmployeeCommand cmd) {
+        Employee e = repo.findById(id).orElseThrow(() -> new EmployeeNotFoundException(id));
+
+        if (cmd.getEmail() != null && !cmd.getEmail().isBlank()) {
+            repo.findByEmailIgnoreCase(cmd.getEmail())
+                    .filter(existing -> existing.getId() != e.getId())
+                    .ifPresent(existing -> {
+                        throw new DuplicateEmailException(cmd.getEmail());
+                    });
+            e.setEmail(cmd.getEmail().trim());
+        }
+
+        if (cmd.getName() != null && !cmd.getName().isBlank()) {
+            e.setName(cmd.getName().trim());
+        }
+
+        if (cmd.getSalary() != null) {
+            e.setSalary(cmd.getSalary());
+        }
+
+        if (cmd.getBirthDate() != null) {
+            e.setBirthDate(cmd.getBirthDate());
+        }
+
+        if (cmd.getDepartment() != null && !cmd.getDepartment().isBlank()) {
+            e.setDepartment(Department.valueOf(cmd.getDepartment().trim().toUpperCase()));
+        }
+
+        repo.save(e);
+        return toDto(e);
+    }
+
+    public void delete(long id) {
+        if (!repo.existsById(id)) throw new EmployeeNotFoundException(id);
+        repo.deleteById(id);
+    }
+
+    public List<EmployeeDto> bulkCreate(List<CreateEmployeeCommand> commands) {
+        // egyszerű: ha bármelyik email már foglalt, 409
+        for (CreateEmployeeCommand cmd : commands) {
+            repo.findByEmailIgnoreCase(cmd.getEmail()).ifPresent( e -> {
+                throw new DuplicateEmailException(cmd.getEmail());
+            });
+        }
+        return commands.stream()
+                .map(this::create) // create már ment + mapping
+                .toList();
+    }
+
+    private EmployeeDto toDto(Employee e) {
+        return new EmployeeDto(
+                e.getId(),
+                e.getName(),
+                e.getEmail(),
+                e.getSalary(),
+                e.getBirthDate(),
+                e.getDepartment()
+        );
+    }
+}

@@ -32,7 +32,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}")
-    public EmployeeDto get(@PathVariable long id) {
+    public EmployeeDto get(@PathVariable("id") long id) {
         return employeeService.get(id);
     }
 

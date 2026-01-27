@@ -31,7 +31,7 @@ public class EmployeeService {
                 cmd.getEmail().trim(),
                 cmd.getSalary(),
                 cmd.getBirthDate(),
-                Department.valueOf(cmd.getDepartment().trim().toLowerCase())
+                Department.valueOf(cmd.getDepartment().trim().toUpperCase())
         ));
         return toDto(saved);
     }

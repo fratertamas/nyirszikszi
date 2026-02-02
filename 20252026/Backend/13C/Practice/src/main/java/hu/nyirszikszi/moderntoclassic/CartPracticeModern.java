@@ -4,6 +4,7 @@ import hu.nyirszikszi.model.Product;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 
 public class CartPracticeModern {
@@ -23,5 +24,22 @@ public class CartPracticeModern {
                 .findFirst();
     }
 
-    
+    // Kosár SKU listából készít: a termékek nevét (trim + nem üres), egyedi, ABC sorrendben
+    public List<String> cartProductNamesUniqueSorted(List<String> cartSkus) {
+        return cartSkus.stream()
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .filter(s -> s.isBlank())
+                .map(this::findBySkuIgnoreCase)
+                .flatMap(Optional::stream)
+                .map(Product::getName)
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .filter(s -> !s.isBlank())
+                .distinct()
+                .sorted()
+                .toList();
+    }
+
+
 }

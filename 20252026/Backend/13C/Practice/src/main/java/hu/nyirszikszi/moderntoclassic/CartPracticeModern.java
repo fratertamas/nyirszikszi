@@ -41,5 +41,16 @@ public class CartPracticeModern {
                 .toList();
     }
 
+    // Ha van kosárban olyan SKU, ami nem létező termékre mutat, dobjon hibát
+    public void validateCartOrThrow(List<String> cartSkus) {
+        cartSkus.stream()
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .filter(s -> !s.isBlank())
+                .forEach(sku ->
+                        findBySkuIgnoreCase(sku)
+                                .orElseThrow(() -> new IllegalArgumentException("Unknown SKU: " + sku)));
+    }
+
 
 }

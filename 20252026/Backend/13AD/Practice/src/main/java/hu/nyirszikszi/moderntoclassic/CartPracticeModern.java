@@ -41,4 +41,14 @@ public class CartPracticeModern {
                 .toList();
     }
 
+    public void validateCartOrThrow(List<String> cartSkus) {
+        cartSkus.stream()
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .filter(s -> !s.isBlank())
+                .forEach(sku ->
+                        findBySkuIgnoreCase(sku)
+                                .orElseThrow(() -> new IllegalArgumentException("Unknown SKU: " + sku)));
+    }
+
 }

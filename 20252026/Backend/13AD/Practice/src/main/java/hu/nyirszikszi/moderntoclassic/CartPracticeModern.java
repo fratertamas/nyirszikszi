@@ -22,4 +22,5 @@ public class CartPracticeModern {
                 .filter(p -> p.getSku().trim().toLowerCase(Locale.ROOT).equals(needle))
                 .findFirst();
     }
+
 }

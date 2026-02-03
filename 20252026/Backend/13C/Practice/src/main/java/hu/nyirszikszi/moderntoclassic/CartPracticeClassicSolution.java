@@ -53,5 +53,17 @@ public class CartPracticeClassicSolution {
         return names;
     }
 
-    
+    public void validateCartOrThrow(List<String> cartSkus) {
+        for (String sku : cartSkus) {
+            if (sku == null) continue;
+
+            String trimmedSku = sku.trim();
+            if (trimmedSku.isEmpty()) continue;
+
+            Product product = findBySkuIgnoreCaseOrNull(trimmedSku);
+            if (product == null) {
+                throw new IllegalArgumentException("Unknown Sku: " + sku);
+            }
+        }
+    }
 }

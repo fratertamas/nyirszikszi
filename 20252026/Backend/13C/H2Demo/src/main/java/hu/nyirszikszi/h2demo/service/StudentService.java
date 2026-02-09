@@ -3,6 +3,7 @@ package hu.nyirszikszi.h2demo.service;
 import hu.nyirszikszi.h2demo.model.Student;
 import hu.nyirszikszi.h2demo.model.StudentCreateRequest;
 import hu.nyirszikszi.h2demo.repository.StudentRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class StudentService {
                 .orElseThrow(() -> new IllegalArgumentException("Nincs ilyen diák: " + id));
     }
 
+    @Transactional
     public Student create(StudentCreateRequest request) {
         repository.findByEmail(request.email()).ifPresent( s -> {
             throw new IllegalArgumentException("Ezzel az e-maillel már van diák: " + request.email());

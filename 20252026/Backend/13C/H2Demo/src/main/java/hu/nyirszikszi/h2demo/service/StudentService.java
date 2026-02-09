@@ -31,4 +31,8 @@ public class StudentService {
 
         return repository.save(new Student(request.name(), request.email()));
     }
+
+    public void delete(Long id) {
+        repository.deleteById(id);
+    }
 }

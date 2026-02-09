@@ -18,5 +18,8 @@ public class StudentService {
         return repository.findAll();
     }
 
-    
+    public Student findById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Nincs ilyen diák: " + id));
+    }
 }

@@ -3,6 +3,7 @@ package hu.nyirszikszi.h2demo.controller;
 import hu.nyirszikszi.h2demo.model.Student;
 import hu.nyirszikszi.h2demo.model.StudentCreateRequest;
 import hu.nyirszikszi.h2demo.service.StudentService;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,5 +26,16 @@ public class StudentController {
     public Student byId(@PathVariable Long id) {
         return service.findById(id);
     }
-    
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Student create(@RequestBody StudentCreateRequest request) {
+        return service.create(request);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
+    }
 }

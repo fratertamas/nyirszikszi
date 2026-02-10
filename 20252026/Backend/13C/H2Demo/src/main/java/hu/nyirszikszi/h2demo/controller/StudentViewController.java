@@ -26,7 +26,7 @@ public class StudentViewController {
     // Új diák űrlap
     @GetMapping("/new")
     public String createForm(Model model) {
-        model.addAttribute("students", new StudentCreateRequest("", ""));
+        model.addAttribute("student", new StudentCreateRequest("", ""));
         return "students/new"; // templates/students/new.html
     }
 

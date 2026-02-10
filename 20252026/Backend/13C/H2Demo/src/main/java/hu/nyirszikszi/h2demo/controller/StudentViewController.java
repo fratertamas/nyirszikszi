@@ -1,5 +1,6 @@
 package hu.nyirszikszi.h2demo.controller;
 
+import hu.nyirszikszi.h2demo.model.StudentCreateRequest;
 import hu.nyirszikszi.h2demo.service.StudentService;
 import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
@@ -24,5 +25,11 @@ public class StudentViewController {
     }
 
     // Új diák űrlap
+    @GetMapping("/new")
+    public String createForm(Model model) {
+        model.addAttribute("students", new StudentCreateRequest("", ""));
+        return "students/new"; // templates/students/new.html
+    }
+
     
 }

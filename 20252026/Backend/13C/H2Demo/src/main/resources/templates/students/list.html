@@ -1,10 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hu" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Diákok</title>
 </head>
 <body>
+    <h1>Diákok</h1>
 
+<p>
+    <a th:href="@{/students/new}">+ Új diák</a>
+</p>
+
+<table style="border: 1px solid black" >
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Név</th>
+            <th>Email</th>
+            <th>Művelet</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr th:each="s : ${students}">
+            <td th:text="${s.id}">1</td>
+            <td th:text="${s.name}">Név</td>
+            <td th:text="${s.email}">email</td>
+            <td>
+                <form th:action="@{/students/{id}/delete(id=${s.id})}" method="post" style="display:inline;">
+                    <button type="submit">Törlés</button>
+                </form>
+            </td>
+        </tr>
+    </tbody>
+</table>
 </body>
 </html>

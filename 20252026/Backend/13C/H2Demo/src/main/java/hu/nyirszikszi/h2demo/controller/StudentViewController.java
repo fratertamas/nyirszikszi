@@ -6,6 +6,8 @@ import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -29,6 +31,13 @@ public class StudentViewController {
     public String createForm(Model model) {
         model.addAttribute("students", new StudentCreateRequest("", ""));
         return "students/new"; // templates/students/new.html
+    }
+
+    // Űrlap elküldése
+    @PostMapping
+    public String create(@ModelAttribute("student") StudentCreateRequest request) {
+        service.create(request);
+        return "redirect:/students";
     }
 
     

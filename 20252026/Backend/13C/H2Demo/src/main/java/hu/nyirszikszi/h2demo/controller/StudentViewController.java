@@ -44,5 +44,5 @@ public class StudentViewController {
         return "redirect:/students";
     }
 
-    
+
 }

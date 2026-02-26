@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="hu" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Movie nyilvántartás</title>
+
+  <!-- Bootstrap 5 CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container">
+    <a class="navbar-brand" href="/movies">🎬 Movie nyilvántartás</a>
+    <div class="ms-auto">
+      <a class="btn btn-outline-light btn-sm" href="/h2-console" target="_blank">H2 Console</a>
+    </div>
+  </div>
+</nav>
+
+<main class="container my-4">
+
+  <div class="row g-4">
+    <!-- Bal oldal: űrlap -->
+    <div class="col-lg-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title mb-3">Új film felvétele</h5>
+
+          <!-- Üzenetek -->
+          <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+          <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+          <form th:action="@{/movies}" method="post" th:object="${movieForm}">
+            <div class="mb-3">
+              <label class="form-label">Cím</label>
+              <input type="text" class="form-control" th:field="*{title}" placeholder="pl. The Matrix">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Rendező</label>
+              <input type="text" class="form-control" th:field="*{director}" placeholder="pl. The Wachowskis">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">IMDb ID</label>
+              <input type="text" class="form-control" th:field="*{imdbId}" placeholder="pl. tt0133093">
+              <div class="form-text">Legyen egyedi (duplikációra hibát dobunk).</div>
+            </div>
+
+            <button class="btn btn-primary w-100" type="submit">Hozzáadás</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="small text-muted mt-3">
+        Tipp: az API is működik külön: <code>/api/movies</code>
+      </div>
+    </div>
+
+    <!-- Jobb oldal: táblázat -->
+    <div class="col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <h5 class="card-title mb-0">Filmek</h5>
+            <span class="badge text-bg-secondary" th:text="'Összesen: ' + ${#lists.size(movies)}">Összesen: 0</span>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-dark">
+              <tr>
+                <th style="width: 80px;">ID</th>
+                <th>Cím</th>
+                <th>Rendező</th>
+                <th>IMDb</th>
+                <th style="width: 140px;" class="text-end">Művelet</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr th:if="${#lists.isEmpty(movies)}">
+                <td colspan="5" class="text-center text-muted py-4">Még nincs film rögzítve.</td>
+              </tr>
+
+              <tr th:each="m : ${movies}">
+                <td th:text="${m.id}">1</td>
+                <td class="fw-semibold" th:text="${m.title}">The Matrix</td>
+                <td th:text="${m.director}">The Wachowskis</td>
+                <td>
+                  <code th:text="${m.imdbId}">tt0133093</code>
+                </td>
+                <td class="text-end">
+                  <form th:action="@{'/movies/' + ${m.id} + '/delete'}" method="post" class="d-inline"
+                        onsubmit="return confirm('Biztosan törlöd?');">
+                    <button class="btn btn-outline-danger btn-sm" type="submit">Törlés</button>
+                  </form>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

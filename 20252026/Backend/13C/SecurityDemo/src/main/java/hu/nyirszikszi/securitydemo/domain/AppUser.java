@@ -51,5 +51,8 @@ public class AppUser {
         return roles;
     }
 
+    public void addRole(Role role) {
+        this.roles.add(role);
+    }
     
 }

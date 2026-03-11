@@ -22,6 +22,13 @@ public class StudentViewController {
         return "students/list";  // templates/students/list.html
     }
 
+    // Új diák űrlap
+    @GetMapping("/new")
+    public String createForm(Model model) {
+        model.addAttribute("student", new StudentCreateRequest("", ""));
+        return "students/new"; // templates/students/new.html
+    }
+
     // Űrlap elküldése
     @PostMapping
     public String create(@ModelAttribute("student")StudentCreateRequest request) {
